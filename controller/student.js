@@ -27,7 +27,7 @@ const enrollOnCourse = async (req, res) => {
         return res.status(404).json({"Message":"You're already enrolled"});
     }
 
-    const id = enrollementDb.enrollement[enrollementDb.enrollement.length - 1].id + 1 || 1;
+    const id = enrollementDb.enrollement.length === 0 ? 1 : enrollementDb.enrollement[enrollementDb.enrollement.length - 1].id + 1;
 
     const newEnrolled = {
         "id": id,

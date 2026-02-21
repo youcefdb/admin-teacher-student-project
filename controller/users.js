@@ -26,7 +26,7 @@ const addTeacher = async (req, res) => { //Add Teacher By Admin(role = teacher)
     }else{
         try{
             const cryptedPassword = await bcrypt.hash(password, 10); // Crypte The Pass
-            const id = userDb.user[userDb.user.length - 1].id + 1 || 1;
+            const id = userDb.user.length === 0 ? 1 : userDb.user[userDb.user.length - 1].id + 1
             const newTeacher = {
                 "id": id,
                 "role": "teacher",
@@ -56,6 +56,9 @@ const updateUser = async (req, res) => {
         return res.sendStatus(401);
     }
 
+    delete req.body.role;
+
+
     await writeFile(path.join(__dirname, "..", "data", "userDb.json"), JSON.stringify(userDb.user));
     res.json(foundUser);
 }
@@ -66,12 +69,15 @@ const deleteUser = async (req, res) => {
         return res.status(404).json({"Message": `${parseInt(req.params.id)} does not exist`});
     }
 
-    if(req.role === 1000){
-        return res.status(400).json({"Message": "You can't delete Admin"});
+    const adminCount = userDb.user.filter(u => u.role === "admin").length;
+
+    if(foundUser.role === "admin" && adminCount === 1){
+        return res.status(400).json({ message: "Cannot delete the last admin" });
     }
 
+
     const deletedUser = userDb.user.filter(stud => stud.id !== parseInt(req.params.id));
-    userDb.setUser(deletedUser.sort((a, b) => a - b));
+    userDb.setUser(deletedUser.sort((a, b) => a.id - b.id));
     await writeFile(path.join(__dirname, "..", "data", "userDb.json"), JSON.stringify(userDb.user));
     res.json({"Message": `${foundUser.role} ${foundUser.username} with ${foundUser.id} deleted succss`});
 }

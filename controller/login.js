@@ -24,6 +24,8 @@ const loginHandle = async (req, res) => {
         return res.sendStatus(401);
     }
 
+    if(findUser.status !== "approved");
+
     const check = await bcrypt.compare(
         password,
         findUser.password
@@ -34,7 +36,6 @@ const loginHandle = async (req, res) => {
             {
                 "userInfo" : {
                     "id": findUser.id,
-                    "username": findUser.username,
                     "role": USERS_ROLES[findUser.role]
                 }
             },
@@ -46,7 +47,6 @@ const loginHandle = async (req, res) => {
             {
                 "userInfo":{
                     "id": findUser.id,
-                    "username": findUser.username,
                     "role": USERS_ROLES[findUser.role]
                 }
             },

@@ -10,7 +10,7 @@ const roleCheck = (...allowedRoles) => {
         const result = roles.includes(req.role);
 
         if (!result) {
-            return res.status(409).json({ message: "Unauthorized" });
+            return res.sendStatus(403);
         }
 
         next();
